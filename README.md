@@ -1,4 +1,6 @@
-#Google Analytics API PHP
+# Example-1
+
+##Google Analytics API PHP
 
 Simple class to set up Oauth 2.0 with Google and query the Google Analytics API v3 with PHP. Curl is required!
 The class supports getting the access tokens for *web applications* and *service accounts* registered in the Google APIs console.   
@@ -39,7 +41,54 @@ This code is needed to get the tokens.
 $code = $_GET['code'];
 $auth = $ga->auth->getAccessToken($code);
 
-// Try to get the AccessToken
+// Try to get the AccessTokenDescription
+===========
+
+Server Side Google Analytics (SSGA) is a simple PHP 5 class, which allows to track server-side events and data within Google Analytics.
+
+Drop-in solution for WordPress plugins (uses the WP HTTP API if available).
+
+Usage
+-----
+
+Google Analytics Server Side can be used simply in the following manner:
+
+
+Easy:
+
+	ssga_track( 'UA-YOUR_NUMBER', 'yoursite.com', '/page.php' )
+
+Advanced:
+	
+	//create new ssga object
+	include 'lib/ss-ga.class.php';
+	$ssga = new ssga( 'UA-YOUR_NUMBER', 'yoursite.com' );
+
+	//Set a pageview
+	$ssga->set_page( '/page.php' );
+	$ssga->set_page_title( 'Page Title' );
+
+	// Send
+	$ssga->send();
+	$ssga->reset();
+
+Set an event (based on http://code.google.com/apis/analytics/docs/tracking/eventTrackerGuide.html) 
+	
+	//$ssga as created above
+	$ssga->set_event( 'Feed', 'Categories', $label, $value );
+	$ssga->send();
+
+Ecommerce tracking (update and test by @nczz)
+	
+	$ssga_step1 = new ssga( 'UA-12345678-1','domain.tw' );
+	//$transaction_id, $affiliation, $total, $tax, $shipping, $city, $region, $country
+	$ssga_step1->send_transaction("20159527001", "MXP", 280, 0, 80,"Taiwan", "", "TW");
+	
+	$ssga_step2 = new ssga( 'UA-12345678-1','domain.tw' );
+	//$transaction_id, $sku, $product_name, $variation, $unit_price, $quantity
+	$ssga_step2->send_item("20159527001", "1229001", "TEST-PRODUCT", "", 50, 4);
+	
+
 if ($auth['http_code'] == 200) {
 	$accessToken = $auth['access_token'];
 	$refreshToken = $auth['refresh_token'];
@@ -165,3 +214,15 @@ https://developers.google.com/analytics/devguides/reporting/core/dimsmets
 
 ###Google Analytics Query Explorer for testing queries and results:
 http://ga-dev-tools.appspot.com/explorer/
+
+
+# Example-2
+## Using the Measurement Protocol 
+>> You can call direct using get or post method with PHP
+```
+http://www.google-analytics.com/collect?v=1&t=pageview&tid=UA-114573654-1&cid=1703612498.1507881615&dh=www.domain.com&dp=%2Fkishan&dt=ReceiptTested%20Page&ti=D12345&ta=Google%20Store%20-%20Online&tr=1000&tt=1000&ts=1000&tcc=SUMMER2013&pa=purchase&pr1id=P12345&pr1nm=Android%20Warhol%20T-Shirt&pr1ca=Apparel&pr1br=Google&pr1va=Black&pr1ps=1
+```
+
+>> Get refrence prom here about parameter [Click here] (https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#page)
+
+```You can use in PHP curl or file_get_contents```
